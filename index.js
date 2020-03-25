@@ -13,7 +13,7 @@ module.exports = function(word, options, callback) {
   // say it
   try {
     if (!process.env.CI) {
-      require('say').speak(word, isChinese(word) ? 'Ting-Ting' : null);
+      require('say').speak(word, isChinese(word) ? 'Ting-Ting' : 'Tom');
     }
   } catch (e) {
     // do nothing
@@ -22,7 +22,7 @@ module.exports = function(word, options, callback) {
   let count = 0;
   const callbackAll = () => {
     count += 1;
-    if (count >= 3) {
+    if (count >= 2) {
       spinner.stop();
       callback && callback();
     }
@@ -52,25 +52,6 @@ module.exports = function(word, options, callback) {
       } catch (e) {
         // 来自您key的翻译API请求异常频繁，为保护其他用户的正常访问，只能暂时禁止您目前key的访问
       }
-    }
-    callbackAll();
-  });
-
-  // dictionaryapi
-  request.get(SOURCE.dictionaryapi.replace('${word}', word), { timeout: 6000 }, function(
-    error,
-    response,
-    body,
-  ) {
-    if (error) {
-      return callbackAll();
-    }
-    if (response.statusCode == 200) {
-      parseString(body, function(err, result) {
-        if (!err) {
-          print.dictionaryapi(result.entry_list.entry, word, options);
-        }
-      });
     }
     callbackAll();
   });
